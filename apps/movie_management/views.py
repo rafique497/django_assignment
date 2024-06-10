@@ -37,6 +37,7 @@ class MovieViewSet(GenericViewSet):
 class ReviewViewSet(GenericViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()
+    filterset_class = ReviewFilter
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy']:
