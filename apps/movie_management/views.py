@@ -14,7 +14,7 @@ from apps.movie_management.filter import MovieListFilter
 from apps.movie_management.models import Movie, Review
 from apps.movie_management.pagination import return_paginated_response
 from apps.movie_management.serializer import MovieSerializer, ReviewSerializer, MovieWithReviewsSerializer
-from apps.movie_management.utils import CollaborativeFiltering
+from apps.movie_management.utils import CollaborativeFiltering, save_movie_list, save_genre
 
 
 class MovieViewSet(GenericViewSet):
@@ -33,6 +33,20 @@ class MovieViewSet(GenericViewSet):
             return Response({'data': serializer.data})
         return Response({'message': ERROR_CODE['4003']})
 
+    @action(detail=False, methods=['get'], url_path='fetch-movie-list', url_name='fetch-movie-list')
+    def fetch_move_list_from_tmdb_api(self, request):
+        page_num = request.query_params.get('page')
+        status = save_movie_list(page_num)
+        if status:
+            return Response({'message': SUCCESS_CODE['2004']})
+        return Response({'message': ERROR_CODE['4004']})
+
+    @action(detail=False, methods=['get'], url_path='fetch-movie-genre', url_name='fetch-movie-genre')
+    def fetch_move_genre_from_tmdb_api(self, request):
+        status = save_genre()
+        if status:
+            return Response({'message': SUCCESS_CODE['2005']})
+        return Response({'message': ERROR_CODE['4004']})
 
 class ReviewViewSet(GenericViewSet):
     serializer_class = ReviewSerializer
